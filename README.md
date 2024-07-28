@@ -1,4 +1,4 @@
-# SPSH-Ayurvedic-Center
+# SPSH-Ayurvedic-Center - SSD-Assignment-SE4030
 Simple shopping platform for Ayurvedic/Herbal medicines and supplements
 
 - Member 1 - IT21134180 - Sanuthi Vihansa S.A (SanuthiVihansa)
