@@ -8,7 +8,7 @@ router.route("/register/:name/:email").post((req, res)=>{
 
     const msg = {
         to: email,
-        from: 'spshayurvedic@gmail.com',
+        from: 'spshayurvedicbusiness@gmail.com',
         subject: 'Registration Successful',
         text: 'test',
         html: `<p>
@@ -42,7 +42,7 @@ router.route("/update/:name/:email").post((req, res)=>{
         sgMail.setApiKey(process.env.SENDGRID_API_KEY)
         const msg = {
             to: email,
-            from: 'spshayurvedic@gmail.com',
+            from: 'spshayurvedicbusiness@gmail.com',
             subject: 'Your Account Details Have Been Updated',
             text: 'test',
             html: `<p>
@@ -77,7 +77,7 @@ router.route("/delete/:name/:email").post((req, res)=>{
         sgMail.setApiKey(process.env.SENDGRID_API_KEY)
         const msg = {
             to: email,
-            from: 'spshayurvedic@gmail.com',
+            from: 'spshayurvedicbusiness@gmail.com',
             subject: 'Your Account Has Been Removed',
             text: 'test',
             html: `<p>
@@ -111,7 +111,7 @@ router.route("/payment").post((req, res)=>{
 
     const msg = {
         to: email,
-        from: 'spshayurvedic@gmail.com',
+        from: 'spshayurvedicbusiness@gmail.com',
         subject: `Order Confirmation - ${orderRef}`,
         text: 'test',
         html: `<p>
