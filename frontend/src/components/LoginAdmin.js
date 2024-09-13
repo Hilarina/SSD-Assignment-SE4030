@@ -7,6 +7,7 @@ import {
   LoadCanvasTemplateNoReload,
   validateCaptcha,
 } from "react-simple-captcha";
+import bcrypt from "bcryptjs";
 
 export default function LoginAdmin() {
   if (sessionStorage.getItem("sAyurCenNimda") !== null) {
@@ -25,17 +26,19 @@ export default function LoginAdmin() {
     e.preventDefault();
     if (validateCaptcha(captchaText) === true) {
       axios
-        .get(`http://localhost:8070/admin/get/email/${email}`)
+        .get(`http://localhost:8070/adminH/get/email/${email}`)
         .then((res) => {
-          console.log(res.data);
-          if (res.data[0].password === password) {
-            sessionStorage.setItem("sAyurCenNimda", Math.random().toString());
-            window.location.replace(`http://localhost:3000/adminhome`);
-          } else {
-            alert("Invalid Credentials!");
-            loadCaptchaEnginge(6);
-            setCaptchaText("");
-          }
+          // if (res.data[0].password === password) {
+          bcrypt.compare(password, res.data[0].hpw, function (err, result) {
+            if (result === true) {
+              sessionStorage.setItem("sAyurCenNimda", Math.random().toString());
+              window.location.replace(`http://localhost:3000/adminhome`);
+            } else {
+              alert("Invalid Credentials!");
+              loadCaptchaEnginge(6);
+              setCaptchaText("");
+            }
+          });
         })
         .catch((err) => {
           alert("Invalid Credentials!");
