@@ -56,19 +56,49 @@ export default function AddItem() {
 
   
 
-    function handleProductImageChange (event) {
+//     function handleProductImageChange (event) {
+//     const imageFile = event.target.files[0];
+//     var reader = new FileReader();
+//     reader.readAsDataURL(imageFile);
+//     reader.onload = () => {
+//         setImage(reader.result);
+//         console.log(reader.result); //converts to base64.
+//     };
+//     reader.onerror = error => {
+//         console.log("Error : ",error);
+//     };
+    
+//   };
+
+function handleProductImageChange(event) {
     const imageFile = event.target.files[0];
-    var reader = new FileReader();
+
+    // File type validation (only allow JPEG and PNG)
+    const validImageTypes = ['image/jpeg', 'image/png'];
+    if (!validImageTypes.includes(imageFile.type)) {
+        alert("Please upload a valid image file (JPEG or PNG).");
+        return;
+    }
+
+    // File size validation (set a max limit, e.g., 5MB)
+    const maxFileSize = 5 * 1024 * 1024; // 5MB
+    if (imageFile.size > maxFileSize) {
+        alert("File size too large. Please upload an image smaller than 5MB.");
+        return;
+    }
+
+    // FileReader to convert the image to base64
+    const reader = new FileReader();
     reader.readAsDataURL(imageFile);
     reader.onload = () => {
-        setImage(reader.result);
-        console.log(reader.result); //converts to base64.
+        setImage(reader.result); // Set the base64 string
+        console.log(reader.result); // Log base64 string for debugging
     };
     reader.onerror = error => {
-        console.log("Error : ",error);
+        console.log("Error reading file: ", error);
+        alert("An error occurred while reading the file. Please try again.");
     };
-    
-  };
+}
 
 
 

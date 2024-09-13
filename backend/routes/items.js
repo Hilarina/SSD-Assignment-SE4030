@@ -21,13 +21,28 @@ const storage = multer.diskStorage({
  
 
 //Specify the storage as multer storage
+// const upload = multer({
+//     //Specify the storage as our "Storage" that we created.
+//     storage:storage
+// //since we are uploading files one by one, we have to make use of "single".
+// //we are going to upload images using this name (testImage).
+// //since we are uploading files one by one, should make use of "single"
+// })
+
+
+//Attackers can't upload malicious files or scripts
 const upload = multer({
-    //Specify the storage as our "Storage" that we created.
-    storage:storage
-//since we are uploading files one by one, we have to make use of "single".
-//we are going to upload images using this name (testImage).
-//since we are uploading files one by one, should make use of "single"
-})
+    storage: storage,
+    limits: { fileSize: 1024 * 1024 * 5 }, // Limit file size to 5MB
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type, only JPEG and PNG are allowed!'), false);
+        }
+    }
+});
+
 
 
 //Since, the "single" method has "image", when passing data, the attribute will be "image"

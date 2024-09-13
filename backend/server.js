@@ -5,6 +5,12 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const xss = require('xss-clean');
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
+
+
+
 const app = express();
 const multer = require("multer");
 //import file system.
@@ -14,7 +20,7 @@ require("dotenv").config();
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
 app.use(express.json());
-
+app.use(xss());
 const PORT = process.env.PORT || 8070;
 
 //app uses the cors dependency package
@@ -48,13 +54,28 @@ const storage = multer.diskStorage({
 });
 
 //Specify the storage as multer storage.
+// const upload = multer({
+//     //Specify the storage as our "Storage" that we created.
+//     storage:storage
+// //since we are uploading files one by one, we have to make use of "single".
+// //we are going to upload images using this name (testImage).
+// //since we are uploading files one by one, should make use of "single"
+// })
+
+
+//Attackers can't upload malicious files or scripts
 const upload = multer({
-    //Specify the storage as our "Storage" that we created.
-    storage:storage
-//since we are uploading files one by one, we have to make use of "single".
-//we are going to upload images using this name (testImage).
-//since we are uploading files one by one, should make use of "single"
-})
+    storage: storage,
+    limits: { fileSize: 1024 * 1024 * 5 }, // Limit file size to 5MB
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type, only JPEG and PNG are allowed!'), false);
+        }
+    }
+});
+
 
 const connection = mongoose.connection;
 connection.once("open", ()=>{
