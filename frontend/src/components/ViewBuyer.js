@@ -16,7 +16,7 @@ export default function ViewBuyer() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8070/buyer/get/email/${email}`)
+      .get(`http://localhost:8070/buyerH/get/email/${email}`)
       .then((res) => {
         setName(res.data[0].name);
         setAddress(res.data[0].address);
@@ -39,7 +39,6 @@ export default function ViewBuyer() {
         className="container"
         style={{ margin: "auto", maxWidth: "500px", padding: "20px" }}
       >
-      
         <h1 style={{ textAlign: "center", marginBottom: "30px" }}>
           View Buyer
         </h1>
@@ -57,7 +56,9 @@ export default function ViewBuyer() {
             <br></br>
             <table>
               <tr>
-                <td style={{ width: "200px" }}><b>Name</b></td>
+                <td style={{ width: "200px" }}>
+                  <b>Name</b>
+                </td>
 
                 <td style={{ width: "200px" }}>:</td>
 
@@ -67,24 +68,35 @@ export default function ViewBuyer() {
               <tr></tr>
 
               <tr>
-                <td> <b>Address</b></td>
+                <td>
+                  {" "}
+                  <b>Address</b>
+                </td>
                 <td>:</td>
                 <td>{address}</td>
               </tr>
 
               <tr>
-                <td> <b>NIC</b></td>
+                <td>
+                  {" "}
+                  <b>NIC</b>
+                </td>
                 <td>:</td>
                 <td>{nic}</td>
               </tr>
               <tr>
-                <td> <b>Email</b></td>
+                <td>
+                  {" "}
+                  <b>Email</b>
+                </td>
                 <td>:</td>
                 <td>{email}</td>
               </tr>
               <tr></tr>
               <tr>
-                <td><b>Phone</b> </td>
+                <td>
+                  <b>Phone</b>{" "}
+                </td>
                 <td>:</td>
                 <td>{phone}</td>
               </tr>
