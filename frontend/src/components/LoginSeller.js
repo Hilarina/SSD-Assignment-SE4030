@@ -7,6 +7,7 @@ import {
   LoadCanvasTemplateNoReload,
   validateCaptcha,
 } from "react-simple-captcha";
+import bcrypt from "bcryptjs";
 
 export default function LoginSeller() {
   if (sessionStorage.getItem("sAyurCenRelles") !== null) {
@@ -25,17 +26,23 @@ export default function LoginSeller() {
     e.preventDefault();
     if (validateCaptcha(captchaText) === true) {
       axios
-        .get(`http://localhost:8070/seller/get/email/${email}`)
+        .get(`http://localhost:8070/sellerH/get/email/${email}`)
         .then((res) => {
-          if (res.data[0].password === password) {
-            sessionStorage.setItem("sAyurCenRelles", Math.random().toString());
-            sessionStorage.setItem("sellerEmail", email);
-            window.location.replace(`http://localhost:3000/sellerhome`);
-          } else {
-            alert("Invalid Credentials !");
-            loadCaptchaEnginge(6);
-            setCaptchaText("");
-          }
+          // if (res.data[0].password === password) {
+          bcrypt.compare(password, res.data[0].hpw, function (err, result) {
+            if (result === true) {
+              sessionStorage.setItem(
+                "sAyurCenRelles",
+                Math.random().toString()
+              );
+              sessionStorage.setItem("sellerEmail", email);
+              window.location.replace(`http://localhost:3000/sellerhome`);
+            } else {
+              alert("Invalid Credentials !");
+              loadCaptchaEnginge(6);
+              setCaptchaText("");
+            }
+          });
         })
         .catch((err) => {
           alert("Please register your account !");
