@@ -3,6 +3,7 @@ let Item = require("../models/Item");
 const multer = require("multer");
 //import file system.
 const fs = require('fs');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 //multer has option called disk storage.2 parameters --> destination and file name.
 //First we save the images in the computer, and then move it to MongoDB
@@ -20,14 +21,19 @@ const storage = multer.diskStorage({
  });
  
 
-//Specify the storage as multer storage
+//Attackers can't upload malicious files or scripts
 const upload = multer({
-    //Specify the storage as our "Storage" that we created.
-    storage:storage
-//since we are uploading files one by one, we have to make use of "single".
-//we are going to upload images using this name (testImage).
-//since we are uploading files one by one, should make use of "single"
-})
+    storage: storage,
+    limits: { fileSize: 1024 * 1024 * 5 }, // Limit file size to 5MB
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type, only JPEG and PNG are allowed!'), false);
+        }
+    }
+});
+
 
 
 //Since, the "single" method has "image", when passing data, the attribute will be "image"
@@ -80,29 +86,68 @@ router.route("/:SupplierId").get(async(req, res)=>{
 })
 
 //DELETE ROUTE.
-router.route("/delete/:SupplierId/:ProductId").delete(async(req, res)=>{
+// router.route("/delete/:SupplierId/:ProductId").delete(async(req, res)=>{
+//     let SupplierId = req.params.SupplierId;
+//     let ProductId = req.params.ProductId;
+//     await Item.findOneAndDelete({"SupplierId": `${SupplierId}`, "ProductId": `${ProductId}`}).then(()=>{
+//         res.status(200).send({status: "Item Deleted"});
+//     }).catch((err)=>{
+//         console.log(err.message);
+//         res.status(500).send({status: "Error in deleting Item", error: err.message});
+//     })
+// })
+
+router.route("/delete/:SupplierId/:ProductId").delete(async(req, res) => {
     let SupplierId = req.params.SupplierId;
     let ProductId = req.params.ProductId;
-    await Item.findOneAndDelete({"SupplierId": `${SupplierId}`, "ProductId": `${ProductId}`}).then(()=>{
-        res.status(200).send({status: "Item Deleted"});
-    }).catch((err)=>{
-        console.log(err.message);
-        res.status(500).send({status: "Error in deleting Item", error: err.message});
-    })
-})
+
+    // Validate ProductId format
+    const productIdPattern = /^P[0-9]{3}$/;
+    if (!productIdPattern.test(ProductId)) {
+        return res.status(400).send('Invalid ProductId format. It must start with "P" followed by 3 digits.');
+    }
+
+    await Item.findOneAndDelete({ "SupplierId": SupplierId, "ProductId": ProductId })
+        .then(() => {
+            res.status(200).send({ status: "Item Deleted" });
+        })
+        .catch((err) => {
+            console.log(err.message);
+            res.status(500).send({ status: "Error in deleting Item", error: err.message });
+        });
+});
 
 //RETRIEVEING ONE SPECIFIC DETAIL
-router.route("/get/:SupplierId/:ProductId").get(async(req,res) =>{ 
+// router.route("/get/:SupplierId/:ProductId").get(async(req,res) =>{ 
+//     let SupplierId = req.params.SupplierId;
+//     let ProductId = req.params.ProductId;
+//     const item = await Item.find({"SupplierId": `${SupplierId}`, "ProductId": `${ProductId}`})
+//     .then((item)=>{
+//         res.status(200).send({status:"Item fetched",item})
+//     }).catch((err)=>{
+//         console.log(err.message);
+//         res.status(500).send({status:"Error with getting one item",error:err.message});
+//     })
+// })
+router.route("/get/:SupplierId/:ProductId").get(async(req, res) => {
     let SupplierId = req.params.SupplierId;
     let ProductId = req.params.ProductId;
-    const item = await Item.find({"SupplierId": `${SupplierId}`, "ProductId": `${ProductId}`})
-    .then((item)=>{
-        res.status(200).send({status:"Item fetched",item})
-    }).catch((err)=>{
-        console.log(err.message);
-        res.status(500).send({status:"Error with getting one item",error:err.message});
-    })
-})
+
+    // Validate ProductId format
+    const productIdPattern = /^P[0-9]{3}$/;
+    if (!productIdPattern.test(ProductId)) {
+        return res.status(400).send('Invalid ProductId format. It must start with "P" followed by 3 digits.');
+    }
+
+    await Item.find({ "SupplierId": SupplierId, "ProductId": ProductId })
+        .then((item) => {
+            res.status(200).send({ status: "Item fetched", item });
+        })
+        .catch((err) => {
+            console.log(err.message);
+            res.status(500).send({ status: "Error with getting one item", error: err.message });
+        });
+});
 
 //UPDATE ROUTE
 router.route("/update/:SupplierID/:ProductId").put(async(req,res)=>{
