@@ -118,17 +118,36 @@ router.route("/delete/:SupplierId/:ProductId").delete(async(req, res) => {
 });
 
 //RETRIEVEING ONE SPECIFIC DETAIL
-router.route("/get/:SupplierId/:ProductId").get(async(req,res) =>{ 
+// router.route("/get/:SupplierId/:ProductId").get(async(req,res) =>{ 
+//     let SupplierId = req.params.SupplierId;
+//     let ProductId = req.params.ProductId;
+//     const item = await Item.find({"SupplierId": `${SupplierId}`, "ProductId": `${ProductId}`})
+//     .then((item)=>{
+//         res.status(200).send({status:"Item fetched",item})
+//     }).catch((err)=>{
+//         console.log(err.message);
+//         res.status(500).send({status:"Error with getting one item",error:err.message});
+//     })
+// })
+router.route("/get/:SupplierId/:ProductId").get(async(req, res) => {
     let SupplierId = req.params.SupplierId;
     let ProductId = req.params.ProductId;
-    const item = await Item.find({"SupplierId": `${SupplierId}`, "ProductId": `${ProductId}`})
-    .then((item)=>{
-        res.status(200).send({status:"Item fetched",item})
-    }).catch((err)=>{
-        console.log(err.message);
-        res.status(500).send({status:"Error with getting one item",error:err.message});
-    })
-})
+
+    // Validate ProductId format
+    const productIdPattern = /^P[0-9]{3}$/;
+    if (!productIdPattern.test(ProductId)) {
+        return res.status(400).send('Invalid ProductId format. It must start with "P" followed by 3 digits.');
+    }
+
+    await Item.find({ "SupplierId": SupplierId, "ProductId": ProductId })
+        .then((item) => {
+            res.status(200).send({ status: "Item fetched", item });
+        })
+        .catch((err) => {
+            console.log(err.message);
+            res.status(500).send({ status: "Error with getting one item", error: err.message });
+        });
+});
 
 //UPDATE ROUTE
 router.route("/update/:SupplierID/:ProductId").put(async(req,res)=>{
