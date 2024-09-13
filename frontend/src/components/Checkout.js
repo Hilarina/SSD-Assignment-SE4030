@@ -49,7 +49,7 @@ export default function Checkout() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8070/buyer/get/email/${email}`)
+      .get(`http://localhost:8070/buyerH/get/email/${email}`)
       .then((res) => {
         setName(res.data[0].name);
         setAddress(res.data[0].address);
@@ -61,7 +61,7 @@ export default function Checkout() {
       });
 
     axios
-      .get("http://localhost:8070/seller/")
+      .get("http://localhost:8070/sellerH/")
       .then((res) => {
         setSellers(res.data);
         setDelAgent(res.data[0].email);
@@ -83,7 +83,7 @@ export default function Checkout() {
 
   function calcTotAmount() {
     totalAmount = netAmount + parseFloat(delChrg);
-    usdAmount = parseFloat((totalAmount / 319.67).toFixed(2));  //convert lkr amount to usd
+    usdAmount = parseFloat((totalAmount / 319.67).toFixed(2)); //convert lkr amount to usd
   }
 
   //logic to set showButton to true or false depending on payment option selected
@@ -147,10 +147,12 @@ export default function Checkout() {
     }
   }
 
-  function getDelChrg(agentEmail){
-    axios.get(`http://localhost:8070/seller/get/email/${agentEmail}`).then((res)=>{
-      setDelChrg(res.data[0].delChrg);
-    })
+  function getDelChrg(agentEmail) {
+    axios
+      .get(`http://localhost:8070/sellerH/get/email/${agentEmail}`)
+      .then((res) => {
+        setDelChrg(res.data[0].delChrg);
+      });
   }
 
   return (
@@ -161,58 +163,65 @@ export default function Checkout() {
       <center>
         <h1>Checkout page</h1>
         <b>Your Details</b>
-    <table>
-		<tr> 
-			<td style={{width: "250px"}}>  Name </td>
-			<td style={{width: "100px"}}>  : </td>
-			<td style={{width: "100px"}}> {name} </td>
-		</tr>
+        <table>
+          <tr>
+            <td style={{ width: "250px" }}> Name </td>
+            <td style={{ width: "100px" }}> : </td>
+            <td style={{ width: "100px" }}> {name} </td>
+          </tr>
 
-		<tr>
-			<td> Address </td>
-			<td> : </td>
-			<td> {address} </td>
-		</tr>
+          <tr>
+            <td> Address </td>
+            <td> : </td>
+            <td> {address} </td>
+          </tr>
 
-		<tr>
-			<td>NIC</td>
-			<td>:</td>
-			<td>{nic}</td>
-		</tr>
+          <tr>
+            <td>NIC</td>
+            <td>:</td>
+            <td>{nic}</td>
+          </tr>
 
-		<tr>
-			<td>Email</td>
-			<td>:</td>
-			<td>{email}</td>
-		</tr>
-		
-    <tr>
-			<td>Phone</td>
-			<td>:</td>
-			<td>{phone}</td>
-		</tr>
-		
-		<tr>
-			<td><b>Net Amount</b></td>
-			<td>:</td>
-			<td>Rs.{parseFloat(netAmount).toFixed(2)}</td>
-		</tr>
-		
-    <tr>
-			<td><b>Delivery Charge</b></td>
-			<td>:</td>
-			<td>Rs.{parseFloat(delChrg).toFixed(2)}{calcTotAmount()}</td>
-		</tr>
-		
-    <tr>
-			<td><b>Total Amount</b></td>
-			<td>:</td>
-			<td>Rs.{parseFloat(totalAmount).toFixed(2)}</td>
-		</tr>
+          <tr>
+            <td>Email</td>
+            <td>:</td>
+            <td>{email}</td>
+          </tr>
 
-	</table>
-      <br></br>
-      
+          <tr>
+            <td>Phone</td>
+            <td>:</td>
+            <td>{phone}</td>
+          </tr>
+
+          <tr>
+            <td>
+              <b>Net Amount</b>
+            </td>
+            <td>:</td>
+            <td>Rs.{parseFloat(netAmount).toFixed(2)}</td>
+          </tr>
+
+          <tr>
+            <td>
+              <b>Delivery Charge</b>
+            </td>
+            <td>:</td>
+            <td>
+              Rs.{parseFloat(delChrg).toFixed(2)}
+              {calcTotAmount()}
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <b>Total Amount</b>
+            </td>
+            <td>:</td>
+            <td>Rs.{parseFloat(totalAmount).toFixed(2)}</td>
+          </tr>
+        </table>
+        <br></br>
         <b>Select the delivery agent</b> <br />
         <select
           id="delAgents"
@@ -224,28 +233,27 @@ export default function Checkout() {
         <br />
         <br />
         <div align="center">
-        <b>Payment method</b> <br />
-        <select
-          name="paymentMethod"
-          id="paymentMethod"
-          A
-          onChange={(e) => {
-            setPaymentMethod(e.target.value);
-            enableCard(e.target.value);
-            setStatusValue(e.target.value);
-          }}
-        >
-          <option value="Cash on Delivery" id="cash" selected>
-            Cash on Delivery
-          </option>
-          <option value="Online Payment" id="card">
-            Online Payment
-          </option>
-        </select>
-        <br />
-        <br />
+          <b>Payment method</b> <br />
+          <select
+            name="paymentMethod"
+            id="paymentMethod"
+            A
+            onChange={(e) => {
+              setPaymentMethod(e.target.value);
+              enableCard(e.target.value);
+              setStatusValue(e.target.value);
+            }}
+          >
+            <option value="Cash on Delivery" id="cash" selected>
+              Cash on Delivery
+            </option>
+            <option value="Online Payment" id="card">
+              Online Payment
+            </option>
+          </select>
+          <br />
+          <br />
         </div>
-        
         {/* condition to display PayPal button depending on payment option selected */}
         {showButton ? (
           <PaypalCheckoutButton

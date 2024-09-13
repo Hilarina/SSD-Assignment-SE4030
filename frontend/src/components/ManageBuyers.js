@@ -91,7 +91,7 @@ export default function ManageBuyers() {
                       if (response) {
                         axios
                           .delete(
-                            `http://localhost:8070/buyer/delete/email/${buyer.email}`
+                            `http://localhost:8070/buyerH/delete/email/${buyer.email}`
                           )
                           .then(() => {
                             axios
