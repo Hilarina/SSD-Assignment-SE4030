@@ -3,6 +3,7 @@ let Item = require("../models/Item");
 const multer = require("multer");
 //import file system.
 const fs = require('fs');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 //multer has option called disk storage.2 parameters --> destination and file name.
 //First we save the images in the computer, and then move it to MongoDB
@@ -19,16 +20,6 @@ const storage = multer.diskStorage({
      },
  });
  
-
-//Specify the storage as multer storage
-// const upload = multer({
-//     //Specify the storage as our "Storage" that we created.
-//     storage:storage
-// //since we are uploading files one by one, we have to make use of "single".
-// //we are going to upload images using this name (testImage).
-// //since we are uploading files one by one, should make use of "single"
-// })
-
 
 //Attackers can't upload malicious files or scripts
 const upload = multer({
@@ -95,16 +86,36 @@ router.route("/:SupplierId").get(async(req, res)=>{
 })
 
 //DELETE ROUTE.
-router.route("/delete/:SupplierId/:ProductId").delete(async(req, res)=>{
+// router.route("/delete/:SupplierId/:ProductId").delete(async(req, res)=>{
+//     let SupplierId = req.params.SupplierId;
+//     let ProductId = req.params.ProductId;
+//     await Item.findOneAndDelete({"SupplierId": `${SupplierId}`, "ProductId": `${ProductId}`}).then(()=>{
+//         res.status(200).send({status: "Item Deleted"});
+//     }).catch((err)=>{
+//         console.log(err.message);
+//         res.status(500).send({status: "Error in deleting Item", error: err.message});
+//     })
+// })
+
+router.route("/delete/:SupplierId/:ProductId").delete(async(req, res) => {
     let SupplierId = req.params.SupplierId;
     let ProductId = req.params.ProductId;
-    await Item.findOneAndDelete({"SupplierId": `${SupplierId}`, "ProductId": `${ProductId}`}).then(()=>{
-        res.status(200).send({status: "Item Deleted"});
-    }).catch((err)=>{
-        console.log(err.message);
-        res.status(500).send({status: "Error in deleting Item", error: err.message});
-    })
-})
+
+    // Validate ProductId format
+    const productIdPattern = /^P[0-9]{3}$/;
+    if (!productIdPattern.test(ProductId)) {
+        return res.status(400).send('Invalid ProductId format. It must start with "P" followed by 3 digits.');
+    }
+
+    await Item.findOneAndDelete({ "SupplierId": SupplierId, "ProductId": ProductId })
+        .then(() => {
+            res.status(200).send({ status: "Item Deleted" });
+        })
+        .catch((err) => {
+            console.log(err.message);
+            res.status(500).send({ status: "Error in deleting Item", error: err.message });
+        });
+});
 
 //RETRIEVEING ONE SPECIFIC DETAIL
 router.route("/get/:SupplierId/:ProductId").get(async(req,res) =>{ 
