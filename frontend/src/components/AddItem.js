@@ -21,14 +21,6 @@ export default function AddItem() {
     }
 
     //Create 3 variables/states for name,age and gender
-    //The initialization of these 3 states have been done below.
-    //It is using the setName/setAge/setGender that we assign values to the states of name/age/gender respectively.
-    //As the initial/default value we pass ("") in the useState of each respective state.
-    //onChange is an event
-    //The values passed in the text field of the form should be assigned to the respective state(name,age,gender) --> we do this using the onChange event available.
-    //Value given in the input field to record he name should be passed to the state "name" respectively. ---> could be done using the setName method.
-    //In the setName method we pass an argument ---> (e.target.value) --> what happens in taget.value is ---> value entered in the text field to input the name will be assigned to the state of "name".
-    //Same process applies to the other 2 variables as well.
     const [ProductId,setItemCode] = useState("");
     const [Name, setItemName] = useState("");
     const [Description,setItemDescription] = useState("");
