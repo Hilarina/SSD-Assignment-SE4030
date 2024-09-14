@@ -1,10 +1,4 @@
-// rafce --> this command will automatically generate the basic code.
 
-//import the React library here, which was assigned to a variable callled "react" in package.json
-//The useState function in 'ReactHook' will be called in the import statement. ---> this helps to define a "state" in a function based approach, without the use of a constructor.
-//If we don't use the "Export default" --> have to include the curly brackets surrounding "useState"
-//First thing it returns --->This "useState" returns the value of the state.(The counter we developed using the "increment" button for instance)
-//Second thing it returns ---> The "useState" also has the respective function to be implemented that reveals how the state value is updated.
 import React, { useEffect, useState } from "react";
 import FileBase64 from 'react-file-base64';
 //import ReactDOM from 'react-dom';
@@ -12,7 +6,7 @@ import FileBase64 from 'react-file-base64';
 import axios from "axios";
 //const fs = require('fs');
 import Button from 'react-bootstrap/Button';
-
+import DOMPurify from 'dompurify';
 
 export default function AddItem() {
 
