@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
+//USED FOR OPEN ID
+// import { jwtDecode } from "jwt-decode";
 import {
   loadCaptchaEnginge,
   LoadCanvasTemplate,
@@ -22,6 +24,89 @@ export default function LoginBuyer() {
     loadCaptchaEnginge(6);
   }, []);
 
+  //USED FOR OPENID
+  // useEffect(() => {
+  //   loadCaptchaEnginge(6);
+
+  //   // Check for ID token in the URL after Google OAuth login
+  //   const hash = window.location.hash;
+  //   if (hash) {
+  //     const idToken = new URLSearchParams(hash.substring(1)).get("id_token");
+
+  //     if (idToken) {
+  //       // Decode the ID token to get user info (email)
+  //       const decodedToken = jwtDecode(idToken);
+  //       const buyerEmail = decodedToken.email;
+  //       console.log(buyerEmail,"emailllllllll")
+
+  //       // Set session storage items
+  //       sessionStorage.setItem("sAyurCenReyub", Math.random().toString());
+  //       sessionStorage.setItem("buyerEmail", buyerEmail);
+
+  //       // Redirect to buyer home after successful login
+  //       window.location.replace(`/buyerhome`);
+  //     }
+  //   }
+  // }, []);
+
+  const handleClick = () => {
+    const callbackUrl = `http://localhost:3000/buyerhome`; // Must redirect here after Google OAuth
+    const googleClientId = "252001878781-ofto9oejf5b3iv5bca0o2vmthdb62hl7.apps.googleusercontent.com";
+    const targetUrl = `https://accounts.google.com/o/oauth2/auth?redirect_uri=${encodeURIComponent(
+      callbackUrl
+    )}&response_type=token&client_id=${googleClientId}&scope=openid%20email%20profile`;
+
+    // Redirect to Google OAuth
+    window.location.href = targetUrl;
+    
+    // Immediately after the redirection, we capture the access token and set session storage items.
+    window.addEventListener("hashchange", () => {
+      const hash = window.location.hash;
+      const token = new URLSearchParams(hash.substring(1)).get("access_token");
+
+      if (token) {
+        // Fetch user info using the access token
+        axios
+          .get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`)
+          .then((response) => {
+            const buyerEmail = response.data.email;
+
+            // Set session storage items
+            sessionStorage.setItem("sAyurCenReyub", Math.random().toString());
+            sessionStorage.setItem("buyerEmail", buyerEmail);
+
+            // Redirect to buyer home after successful login
+            window.location.replace(`/buyerhome`);
+          })
+          .catch((error) => {
+            console.error("Failed to fetch user info:", error);
+            alert("Failed to log in with Google.");
+          });
+      }
+    });
+  };
+
+  //USED FOR OPEN ID
+  // const handleClick = () => {
+  //   const callbackUrl = `http://localhost:3000/buyerhome`;
+  //   const googleClientId = "252001878781-ofto9oejf5b3iv5bca0o2vmthdb62hl7.apps.googleusercontent.com";
+  //   const targetUrl = `https://accounts.google.com/o/oauth2/auth?redirect_uri=${encodeURIComponent(
+  //     callbackUrl
+  //   )}&response_type=token&client_id=${googleClientId}&scope=openid%20email%20profile`;
+  //   window.location.href = targetUrl;
+  // };
+
+
+  // const handleClick = () => {
+  //   const callbackUrl = `http://localhost:3000/buyerhome`; // Your app's redirect URI
+  //   const googleClientId = "252001878781-ofto9oejf5b3iv5bca0o2vmthdb62hl7.apps.googleusercontent.com";
+  //   const targetUrl = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${encodeURIComponent(
+  //     callbackUrl
+  //   )}&response_type=id_token&client_id=${googleClientId}&scope=openid%20email%20profile&nonce=secureNonce123&state=xyzABC&prompt=consent`;
+
+  //   // Redirect to Google OAuth with OpenID Connect
+  //   window.location.href = targetUrl;
+  // };
   function validate(e) {
     e.preventDefault();
     if (validateCaptcha(captchaText) === true) {
@@ -127,6 +212,13 @@ export default function LoginBuyer() {
                         type="submit"
                       >
                         Login
+                      </button>
+                      <button
+                        className="btn btn-outline-light btn-lg px-5"
+                        type="submit"
+                        onClick={handleClick}
+                      >
+                        Sign In With Google
                       </button>
                     </div>
 
