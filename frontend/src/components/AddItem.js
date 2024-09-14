@@ -92,14 +92,16 @@ function handleProductImageChange(event) {
         //The below code prevents the normal behaviour of the submit button.
         e.preventDefault();
 
+        const cleanName = DOMPurify.sanitize(Name);
+        const cleanDescription = DOMPurify.sanitize(Description);
 
 
         //Create a javascript object. That passes the 3 attributes.
         const newItem = {
             SupplierId,
             ProductId,
-            Name,
-            Description, 
+            Name : cleanName,
+            Description: cleanDescription, 
             Price,
             Quantity, 
             Image
