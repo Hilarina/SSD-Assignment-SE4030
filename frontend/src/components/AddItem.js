@@ -107,31 +107,6 @@ function handleProductImageChange(event) {
             Image
         }
 
-
-
-
-        //We pass the data from the frontend to the backend using the post http request.
-        //Then the backend server responds with another http request.
-        //This http response coming from the backend is handled using a seperate npm package called "axios" --> this is imported at the top following the installation.
-        //axios has a method called post that passes 3 arguments usually, if there is authentication(No authentication meaning --> only 2 parameters)
-        //Pass the backend URL as the first parameter.
-        //Pass the JS object next as the second parameter, that holds the 3 attributes passed through the form.
-
-
-        //METHOD TO PREVENT DUPLICATE RECORDS ENTERED.
-        /*
-            const len = productIds.length;
-            let i;
-            let count;
-            for(i = 0; i < len; i++){
-                if(productIds[i] == newItem.ProductId){
-                    alert("Existing Product ID cannot be entered");
-                    count++;
-                }
-            }
-
-          if(count == 0 ){ 
-        */
         if (block === false){
             axios.post(`http://localhost:8070/item/add/`, newItem).then(() => {
                 //After sending the data --> backend server responds --> if successfully added then an alert message is sent.
@@ -147,14 +122,14 @@ function handleProductImageChange(event) {
                 setItemQty();
                 setImage("");
 
-                //Can move to the home page after deleting the data
-                // window.location.replace("http://localhost:3000/item");
-
-                //can move to the add student page after deleting the data.  
-                //window.location.replace("http://localhost:3000/inventory/add");
             }).catch((err) => {
                 //After sending the data --> backend server responds --> if it wasn't successfully added --> the error is handled as an exception.
-                alert(err);
+                if (err.response && err.response.status === 429) {
+                    alert('You have submitted too many requests. Please try again later.');
+                } else {
+                    alert('An error occurred while adding the item.');
+                }
+                // alert(err);
             })
             //Pass the js object that we created in the console.(This will display the name, age,gender that's passed).
             //console.log(newStudent);

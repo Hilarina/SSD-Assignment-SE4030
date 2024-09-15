@@ -4,6 +4,20 @@ const multer = require("multer");
 //import file system.
 const fs = require('fs');
 const ObjectId = require('mongoose').Types.ObjectId;
+const rateLimit = require('express-rate-limit');
+
+// Define rate limiting for adding items
+const addItemLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: "Too many requests from this IP, please try again later."
+});
+
+const updateItemLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per 15 minutes
+    message: "Too many requests from this IP, please try again later."
+});
 
 //multer has option called disk storage.2 parameters --> destination and file name.
 //First we save the images in the computer, and then move it to MongoDB
@@ -38,17 +52,48 @@ const upload = multer({
 
 //Since, the "single" method has "image", when passing data, the attribute will be "image"
 //If you had "testImage" instead, then in Postman, the attribute will be named as "testImage".
-router.route("/add").post(upload.single('Image'),(req, res)=>{
-    //let SupplierId = req.params.SupplierId;
+// router.route("/add").post(upload.single('Image'),(req, res)=>{
+//     //let SupplierId = req.params.SupplierId;
+//     const SupplierId = req.body.SupplierId;
+//     const ProductId = req.body.ProductId;
+//     const Name = req.body.Name;
+//     const Description = req.body.Description;
+//     const Price = req.body.Price;
+//     const Quantity = Number(req.body.Quantity);
+//     //This is where you read the content or the file.
+//     const Image = req.body.Image;
+
+
+//     const newItem = new Item({
+//         SupplierId,
+//         ProductId,
+//         Name,
+//         Description,
+//         Price,
+//         Quantity,
+//         Image : {
+//             data: Buffer.from(Image,'base64'),
+//             contentType: 'Image/png'
+//         },
+//     });
+
+//     newItem.save().
+//     then(()=>{
+//         res.json("Item Added.");
+//     }).catch((err)=>{
+//         console.log(err);
+//     });
+   
+// })
+
+router.route("/add").post(addItemLimiter, upload.single('Image'), (req, res) => {
     const SupplierId = req.body.SupplierId;
     const ProductId = req.body.ProductId;
     const Name = req.body.Name;
     const Description = req.body.Description;
     const Price = req.body.Price;
     const Quantity = Number(req.body.Quantity);
-    //This is where you read the content or the file.
     const Image = req.body.Image;
-
 
     const newItem = new Item({
         SupplierId,
@@ -57,20 +102,20 @@ router.route("/add").post(upload.single('Image'),(req, res)=>{
         Description,
         Price,
         Quantity,
-        Image : {
-            data: Buffer.from(Image,'base64'),
-            contentType: 'Image/png'
+        Image: {
+            data: Buffer.from(Image, 'base64'),
+            contentType: 'image/png'
         },
     });
 
-    newItem.save().
-    then(()=>{
-        res.json("Item Added.");
-    }).catch((err)=>{
-        console.log(err);
-    });
-   
-})
+    newItem.save()
+        .then(() => res.json("Item Added."))
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({ error: "Error adding item." });
+        });
+});
+
 
 //RETRIEVE DETAILS ROUTE.
 router.route("/:SupplierId").get(async(req, res)=>{
