@@ -58,21 +58,18 @@ export default function AddItem() {
 
 function handleProductImageChange(event) {
     const imageFile = event.target.files[0];
-
     // File type validation (only allow JPEG and PNG)
     const validImageTypes = ['image/jpeg', 'image/png'];
     if (!validImageTypes.includes(imageFile.type)) {
         alert("Please upload a valid image file (JPEG or PNG).");
         return;
     }
-
     // File size validation (set a max limit, e.g., 5MB)
     const maxFileSize = 5 * 1024 * 1024; // 5MB
     if (imageFile.size > maxFileSize) {
         alert("File size too large. Please upload an image smaller than 5MB.");
         return;
     }
-
     // FileReader to convert the image to base64
     const reader = new FileReader();
     reader.readAsDataURL(imageFile);
@@ -86,16 +83,11 @@ function handleProductImageChange(event) {
     };
 }
 
-
-
     function sendData(e) {
         //The below code prevents the normal behaviour of the submit button.
         e.preventDefault();
-
         const cleanName = DOMPurify.sanitize(Name);
         const cleanDescription = DOMPurify.sanitize(Description);
-
-
         //Create a javascript object. That passes the 3 attributes.
         const newItem = {
             SupplierId,
@@ -106,14 +98,11 @@ function handleProductImageChange(event) {
             Quantity, 
             Image
         }
-
         if (block === false){
             axios.post(`http://localhost:8070/item/add/`, newItem).then(() => {
                 //After sending the data --> backend server responds --> if successfully added then an alert message is sent.
                 alert(`Item Added`);
                 window.location.replace("http://localhost:3000/sellerhome/item");
-
-
                 //After submitting the details ---> the values should be taken off from the fields ---> to do this --> the setters are assigned with ("")
                 setItemCode("");
                 setItemName("");
@@ -212,7 +201,7 @@ function handleProductImageChange(event) {
                         <label for="quantity">Quantity</label>
                     </div>
 
-                    <div class="col-sm-10">
+                    <div className="col-sm-10">
                         <input type="number" className="form-control" required id="quantity" min="0" placeholder="Enter Quantity " onChange={(e) => {
                             setItemQty(e.target.value);
                         }}/>
