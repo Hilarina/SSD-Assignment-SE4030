@@ -97,22 +97,6 @@ app.use("/seller", sellerRouter);
 const sellerHRouter = require("./routes/sellerH.js");
 app.use("/sellerH", sellerHRouter);
 
-/*
-app.post('/',upload.single('Image'),(req,res)=>{
-    const saveImage = new Item({
-        name: req.body.name,
-        image:{
-            data: fs.readFileSync('uploads/',req.file.filename),
-            contentType:"image/png"
-        },
-    });
-    saveImage.save()
-    .then((res)=>console.log('Image is saved'))
-    .catch((err)=>{
-        console.log(err,"error has occured");
-    });
-});
-*/
 
 //The server.js should be able to access the "inventories.js" file of the "routes folder."
 //The inventories.js file access path is assigned to a variable called "inventoryRouter"
