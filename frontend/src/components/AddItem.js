@@ -152,7 +152,7 @@ function handleProductImageChange(event) {
                         <label for="name">Item Code</label>
                     </div>
 
-                    <div class="col-sm-10">
+                    <div className="col-sm-10">
                         <input type="text" className="form-control" required pattern ="[P][0-9]{3}" title="Has to be of 4 characters"  id="code" placeholder="Enter item code" onChange={(e) => {
                             setItemCode(e.target.value);
                             checkItemCode(e.target.value);
@@ -165,7 +165,7 @@ function handleProductImageChange(event) {
                         <label for="description">Item Name</label>
                     </div>
 
-                    <div class="col-sm-10">
+                    <div className="col-sm-10">
                         <input type="text" className="form-control" id="name" pattern="[a-zA-Z\s]+" required placeholder="Enter Name" onChange={(e) => {
                             setItemName(e.target.value);
                         }} />
@@ -176,7 +176,7 @@ function handleProductImageChange(event) {
                         <label for="description">Item Description</label>
                     </div>
 
-                    <div class="col-sm-10">
+                    <div className="col-sm-10">
                         <input type="text" className="form-control" pattern="[a-zA-Z\s]+" required id="description"  placeholder="Enter Description" onChange={(e) => {
                             setItemDescription(e.target.value);
                         }} />
@@ -188,7 +188,7 @@ function handleProductImageChange(event) {
                         <label for="quantity">Item Price</label>
                     </div>
 
-                    <div class="col-sm-10">
+                    <div className="col-sm-10">
                         <input type="number" className="form-control" required id="price" min="0" placeholder="Enter Price " onChange={(e) => {
                             setItemPrice(e.target.value);
                             
@@ -208,7 +208,7 @@ function handleProductImageChange(event) {
                     </div>
                 </div>
 
-                <div class="col-sm-10">
+                <div className="col-sm-10">
                     <label htmlFor="item_image">Image</label>
                         <input type="file" id="image" placeholder="Upload Image" required onChange={(e)=>{
                         handleProductImageChange(e);
@@ -218,7 +218,7 @@ function handleProductImageChange(event) {
             </div>
             <br></br>
                 
-            <button type="submit" class="btn btn-success" style={{float: 'right'}}>Submit</button>
+            <button type="submit" className="btn btn-success" style={{float: 'right'}}>Submit</button>
 
                 
             </form>
