@@ -36,7 +36,7 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per window
 });
-app.use(limiter);
+// app.use(limiter);
 
 // CSRF Protection Middleware (must be after cookieParser and before routes)
 const csrfProtection = csrf({
@@ -47,6 +47,20 @@ const csrfProtection = csrf({
   },
 });
 app.use(csrfProtection);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+
+  if (err.code === 'EBADCSRFTOKEN') {
+    // CSRF error detected
+    res.status(403).send("Forbidden");
+  } else {
+    res.status(err.status || 500).json({
+      message: `Something went wrong! : ${err.message}`
+    });
+  }
+});
+
 
 // Route to fetch CSRF token for frontend
 app.get("/csrf-token", (req, res) => {
