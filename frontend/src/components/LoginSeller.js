@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
+import googleIcon from '../images/google-favicon.png'; 
 import {
   loadCaptchaEnginge,
   LoadCanvasTemplate,
@@ -146,11 +147,25 @@ export default function LoginSeller() {
                         Login
                       </button>
                       <button
-                        className="btn btn-outline-light btn-lg px-5"
-                        type="submit"
+                        className="btn btn-light btn-lg px-5"
+                        type="button"
                         onClick={handleOAuth}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: "#fff",
+                          color: "#4285F4",
+                          border: "1px solid lightgray",
+                          marginTop: "10px",
+                        }}
                       >
-                        Sign In With Google
+                        <img
+                          src={googleIcon}
+                          alt="Google Icon"
+                          style={{ width: "20px", marginRight: "10px" }}
+                        />
+                        Sign In with Google
                       </button>
                     </div>
 
