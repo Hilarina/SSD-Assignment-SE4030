@@ -17,6 +17,13 @@ export default function DeleteItem() {
     const [Image, setImage] = useState("");
 
     const { del, id } = useParams();
+    const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
 
     useEffect(() => {
         axios.get(`http://localhost:8070/item/get/${id}`).then((res) => {
@@ -35,7 +42,12 @@ export default function DeleteItem() {
 
     function deleteData(e) {
         e.preventDefault();
-        axios.delete(`http://localhost:8070/item/delete/${id}`).then(() => {
+        axios.delete(`http://localhost:8070/item/delete/${id}`, {
+            headers: {
+              "CSRF-Token": csrfToken,
+            },
+            withCredentials: true,
+          }).then(() => {
             alert("Item deleted");
 
             window.location.replace("http://localhost:3000/item");

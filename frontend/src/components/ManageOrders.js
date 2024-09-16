@@ -8,6 +8,13 @@ export default function ManageOrders(){
     }
 
     const [orders, setOrders] = useState([]);
+    const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
 
     useEffect(()=>{
         axios.get("http://localhost:8070/order/getpendings").then((res)=>{
@@ -55,7 +62,12 @@ export default function ManageOrders(){
                                             order.appStatus = "Approved"
                                             var response = window.confirm("Are you sure you want to APPROVE this order?");
                                             if (response){
-                                                axios.put(`http://localhost:8070/order/approvalprocess/${order.orderRef}`, order).then(()=>{
+                                                axios.put(`http://localhost:8070/order/approvalprocess/${order.orderRef}`, order, {
+                                                    headers: {
+                                                      "CSRF-Token": csrfToken,
+                                                    },
+                                                    withCredentials: true,
+                                                  }).then(()=>{
                                                     alert("Order Approved!");
                                                     window.location.replace(`http://localhost:3000/adminhome/manageorders`);
                                                 }).catch((err)=>{
@@ -69,7 +81,12 @@ export default function ManageOrders(){
                                             order.appStatus = "Rejected"
                                             var response = window.confirm("Are you sure you want to REJECT this order?");
                                             if (response){
-                                                axios.put(`http://localhost:8070/order/approvalprocess/${order.orderRef}`, order).then(()=>{
+                                                axios.put(`http://localhost:8070/order/approvalprocess/${order.orderRef}`, order, {
+                                                    headers: {
+                                                      "CSRF-Token": csrfToken,
+                                                    },
+                                                    withCredentials: true,
+                                                  }).then(()=>{
                                                     alert("Order Rejected!");
                                                     window.location.replace(`http://localhost:3000/adminhome/manageorders`);
                                                 }).catch((err)=>{

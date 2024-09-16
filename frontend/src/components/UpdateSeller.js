@@ -17,6 +17,14 @@ export default function UpdateSeller() {
 
   const { paramemail } = useParams();
 
+  const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
+
   useEffect(() => {
     axios
       .get(`http://localhost:8070/sellerH/get/email/${paramemail}`)
@@ -47,7 +55,12 @@ export default function UpdateSeller() {
       };
 
       axios
-        .put(`http://localhost:8070/sellerH/update/${paramemail}`, newSeller)
+        .put(`http://localhost:8070/sellerH/update/${paramemail}`, newSeller, {
+          headers: {
+            "CSRF-Token": csrfToken,
+          },
+          withCredentials: true,
+        })
         .then(() => {
           alert("Seller Updated");
           window.location.replace(
@@ -67,7 +80,12 @@ export default function UpdateSeller() {
       };
 
       axios
-        .put(`http://localhost:8070/sellerH/update/${paramemail}`, newSeller)
+        .put(`http://localhost:8070/sellerH/update/${paramemail}`, newSeller, {
+          headers: {
+            "CSRF-Token": csrfToken,
+          },
+          withCredentials: true,
+        })
         .then(() => {
           alert("Seller Updated");
           window.location.replace(

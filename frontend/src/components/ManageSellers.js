@@ -8,6 +8,13 @@ export default function ManageSellers() {
   }
 
   const [sellers, setSellers] = useState([]);
+  const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
 
   useEffect(() => {
     function getSellers() {
@@ -100,7 +107,12 @@ export default function ManageSellers() {
                         axios
                           .delete(
                             `http://localhost:8070/sellerH/delete/email/${seller.email}`
-                          )
+                            , {
+                              headers: {
+                                "CSRF-Token": csrfToken,
+                              },
+                              withCredentials: true,
+                            })
                           .then(() => {
                             alert("Seller Deleted");
                             window.location.replace(

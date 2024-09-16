@@ -36,6 +36,13 @@ export default function AllItems() {
     const SupplierId = sessionStorage.getItem("sellerEmail");
 
     const [avgRatings, setAvgRatings] = useState({});
+    const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
 
     
     useEffect(() => {
@@ -165,7 +172,12 @@ export default function AllItems() {
              <button className="btn btn-danger btn-sm" style={{ maxWidth: '100%', height: '40px', width: '120px', whiteSpace: 'nowrap'  }}  onClick={()=>{
                                             var response = window.confirm("Are you sure you want to delete this Item?");
                                             if (response){
-                                                axios.delete(`http://localhost:8070/item/delete/${item.SupplierId}/${item.ProductId}`).then(()=>{
+                                                axios.delete(`http://localhost:8070/item/delete/${item.SupplierId}/${item.ProductId}`, {
+                                                    headers: {
+                                                      "CSRF-Token": csrfToken,
+                                                    },
+                                                    withCredentials: true,
+                                                  }).then(()=>{
                                                     alert("Item Deleted");
                                                     window.location.replace("http://localhost:3000/sellerhome/item/");
                                                 }).catch((err)=>{

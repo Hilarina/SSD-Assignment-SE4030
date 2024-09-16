@@ -8,6 +8,13 @@ export default function ManageBuyers() {
   }
 
   const [buyers, setBuyers] = useState([]);
+  const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
 
   useEffect(() => {
     // get buyers data from backend API when component mounts
@@ -92,12 +99,22 @@ export default function ManageBuyers() {
                         axios
                           .delete(
                             `http://localhost:8070/buyerH/delete/email/${buyer.email}`
-                          )
+                            , {
+                              headers: {
+                                "CSRF-Token": csrfToken,
+                              },
+                              withCredentials: true,
+                            })
                           .then(() => {
                             axios
                               .post(
                                 `http://localhost:8072/email/delete/${buyer.name}/${buyer.email}`
-                              )
+                                , {
+                                  headers: {
+                                    "CSRF-Token": csrfToken,
+                                  },
+                                  withCredentials: true,
+                                })
                               .catch((err) => {
                                 alert("Email Service is not available.");
                               });

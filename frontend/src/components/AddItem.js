@@ -26,6 +26,13 @@ export default function AddItem() {
     const SupplierId = sessionStorage.getItem("sellerEmail");
 
     const [block, setBlock] = useState(false);
+    const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
 
 
     useEffect(() => {
@@ -83,7 +90,12 @@ function handleProductImageChange(event) {
             Image
         }
         if (block === false){
-            axios.post(`http://localhost:8070/item/add/`, newItem).then(() => {
+            axios.post(`http://localhost:8070/item/add/`, newItem, {
+                headers: {
+                  "CSRF-Token": csrfToken,
+                },
+                withCredentials: true,
+              }).then(() => {
                 //After sending the data --> backend server responds --> if successfully added then an alert message is sent.
                 alert(`Item Added`);
                 window.location.replace("http://localhost:3000/sellerhome/item");

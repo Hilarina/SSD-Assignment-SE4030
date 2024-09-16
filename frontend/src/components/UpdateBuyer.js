@@ -18,6 +18,13 @@ export default function UpdateBuyer() {
   const [rePassword, setRePassword] = useState("");
 
   const { paramemail } = useParams();
+  const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
 
   useEffect(() => {
     axios
@@ -51,10 +58,20 @@ export default function UpdateBuyer() {
       };
 
       axios
-        .put(`http://localhost:8070/buyerH/update/${paramemail}`, newBuyer)
+        .put(`http://localhost:8070/buyerH/update/${paramemail}`, newBuyer, {
+          headers: {
+            "CSRF-Token": csrfToken,
+          },
+          withCredentials: true,
+        })
         .then(() => {
           axios
-            .post(`http://localhost:8072/email/update/${name}/${email}`)
+            .post(`http://localhost:8072/email/update/${name}/${email}`, {
+              headers: {
+                "CSRF-Token": csrfToken,
+              },
+              withCredentials: true,
+            })
             .catch((err) => {
               alert("Email Service is not available.");
             });
@@ -78,10 +95,20 @@ export default function UpdateBuyer() {
       };
 
       axios
-        .put(`http://localhost:8070/buyerH/update/${paramemail}`, newBuyer)
+        .put(`http://localhost:8070/buyerH/update/${paramemail}`, newBuyer, {
+          headers: {
+            "CSRF-Token": csrfToken,
+          },
+          withCredentials: true,
+        })
         .then(() => {
           axios
-            .post(`http://localhost:8072/email/update/${name}/${email}`)
+            .post(`http://localhost:8072/email/update/${name}/${email}`, {
+              headers: {
+                "CSRF-Token": csrfToken,
+              },
+              withCredentials: true,
+            })
             .catch((err) => {
               alert("Email Service is not available.");
             });

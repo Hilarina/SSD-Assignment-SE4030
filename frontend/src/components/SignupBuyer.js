@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import bcrypt from "bcryptjs";
+import React, { useEffect } from "react";
 
 export default function SignupBuyer() {
   const [name, setName] = useState({});
@@ -10,6 +11,13 @@ export default function SignupBuyer() {
   const [phone, setPhone] = useState({});
   const [password, setPassword] = useState({});
   const [rePassword, setRePassword] = useState({});
+  const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
 
   function proceed(e) {
     e.preventDefault();
@@ -34,10 +42,20 @@ export default function SignupBuyer() {
             };
 
             axios
-              .post("http://localhost:8070/buyerH/add", newBuyer)
+              .post("http://localhost:8070/buyerH/add", newBuyer, {
+                headers: {
+                  "CSRF-Token": csrfToken,
+                },
+                withCredentials: true,
+              })
               .then(() => {
                 axios
-                  .post(`http://localhost:8072/email/register/${name}/${email}`)
+                  .post(`http://localhost:8072/email/register/${name}/${email}`, {
+                    headers: {
+                      "CSRF-Token": csrfToken,
+                    },
+                    withCredentials: true,
+                  })
                   .catch((err) => {
                     alert("Email Service is not available.");
                   });

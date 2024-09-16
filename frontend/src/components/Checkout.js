@@ -43,6 +43,13 @@ export default function Checkout() {
     d.getSeconds().toString();
 
   const appStatus = "Pending";
+  const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
 
   // alert(newDate.getDate().toString() + newDate.getMonth().toString() + newDate.getFullYear().toString() + newDate.getHours().toString() + newDate.getMinutes().toString() + newDate.getSeconds().toString());
   // alert(orderRef.substring(8, 10) + orderRef.substring(11, 15) + orderRef.substring(16, 18) + orderRef.substring(19, 21) + orderRef.substring(22, 24));
@@ -135,10 +142,20 @@ export default function Checkout() {
       };
 
       axios
-        .post("http://localhost:8070/order/add", newOrder)
+        .post("http://localhost:8070/order/add", newOrder, {
+          headers: {
+            "CSRF-Token": csrfToken,
+          },
+          withCredentials: true,
+        })
         .then((req, res) => {
           alert("Order Submitted Successfully");
-          axios.delete(`http://localhost:8070/ShoppingCart/delete/${email}`);
+          axios.delete(`http://localhost:8070/ShoppingCart/delete/${email}`, {
+            headers: {
+              "CSRF-Token": csrfToken,
+            },
+            withCredentials: true,
+          });
           window.location.replace("http://localhost:3000/buyerhome");
         })
         .catch((err) => {
