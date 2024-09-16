@@ -4,7 +4,6 @@ import FileBase64 from 'react-file-base64';
 //import ReactDOM from 'react-dom';
 //Import axios from the axios package we installed.This is needed to move the data from the frontend to the backend via an http request
 import axios from "axios";
-//const fs = require('fs');
 import Button from 'react-bootstrap/Button';
 import DOMPurify from 'dompurify';
 
