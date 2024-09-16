@@ -24,7 +24,8 @@ export default function BuyerCart() {
                 console.log(res.data);
                 setItems(res.data);
             }).catch((err) => {
-                alert(err.message);
+                console.error('Error fetching items:', err);
+                alert('An error occurred while fetching items. Please try again later.');
             })
         }
         getItems();
@@ -53,7 +54,7 @@ export default function BuyerCart() {
             alert("Please add items before checkout!");
         } else {
             sessionStorage.setItem("netAmount", total);
-            window.location.replace("http://localhost:3000/buyer/view/cart/checkout");
+            window.location.replace("/buyer/view/cart/checkout");
         }
     }
 
