@@ -84,7 +84,13 @@ export default function BuyerCart() {
                 Image
             }, {headers:{
                 "CSRF-Token":csrfToken,
-            },withCredentials: true})
+            },withCredentials: true}).then(()=>{
+              window.location.replace(
+                "http://localhost:3000/buyer/view/cart"
+              );
+            }).catch((err)=>{
+              alert(err);
+            })
         }).catch((err)=>{
             alert(err);
         })
@@ -145,9 +151,6 @@ export default function BuyerCart() {
                             .then(() => {
                               resetItemQty(item.itemID, item.productQty);
                               alert("Item Deleted");
-                              window.location.replace(
-                                "http://localhost:3000/buyer/view/cart"
-                              );
                             })
                             .catch((err) => {
                               alert(err);
