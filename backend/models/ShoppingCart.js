@@ -6,22 +6,26 @@ const Schema = mongoose.Schema;
 const cartShema = new Schema({
     buyerEmail: {
         type: String,
-        required: true
-
+        required: true,
+        match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address'],
+        maxlength: 100,
     },
     itemID : {
         type : String,
-        required: true
-        
+        required: true,
+        trim: true,  // Trims any whitespace
+        match: [/^[a-zA-Z0-9]*$/, 'Invalid item ID'] 
     },
     supplierId : {
         type : String,
-        required: true
-        
+        required: true,
+        match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address'],
+        maxlength: 100,
     },
     productName : {
         type : String,
-        required : true
+        required : true,
+        maxlength: 255
     },
     productQty : {
         type : Number,
