@@ -40,21 +40,6 @@ export default function AddItem() {
         })
     }, [])
 
-  
-
-//     function handleProductImageChange (event) {
-//     const imageFile = event.target.files[0];
-//     var reader = new FileReader();
-//     reader.readAsDataURL(imageFile);
-//     reader.onload = () => {
-//         setImage(reader.result);
-//         console.log(reader.result); //converts to base64.
-//     };
-//     reader.onerror = error => {
-//         console.log("Error : ",error);
-//     };
-    
-//   };
 
 function handleProductImageChange(event) {
     const imageFile = event.target.files[0];
