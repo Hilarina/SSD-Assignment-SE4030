@@ -48,44 +48,6 @@ const upload = multer({
     }
 });
 
-
-
-//Since, the "single" method has "image", when passing data, the attribute will be "image"
-//If you had "testImage" instead, then in Postman, the attribute will be named as "testImage".
-// router.route("/add").post(upload.single('Image'),(req, res)=>{
-//     //let SupplierId = req.params.SupplierId;
-//     const SupplierId = req.body.SupplierId;
-//     const ProductId = req.body.ProductId;
-//     const Name = req.body.Name;
-//     const Description = req.body.Description;
-//     const Price = req.body.Price;
-//     const Quantity = Number(req.body.Quantity);
-//     //This is where you read the content or the file.
-//     const Image = req.body.Image;
-
-
-//     const newItem = new Item({
-//         SupplierId,
-//         ProductId,
-//         Name,
-//         Description,
-//         Price,
-//         Quantity,
-//         Image : {
-//             data: Buffer.from(Image,'base64'),
-//             contentType: 'Image/png'
-//         },
-//     });
-
-//     newItem.save().
-//     then(()=>{
-//         res.json("Item Added.");
-//     }).catch((err)=>{
-//         console.log(err);
-//     });
-   
-// })
-
 router.route("/add").post(addItemLimiter, upload.single('Image'), (req, res) => {
     const SupplierId = req.body.SupplierId;
     const ProductId = req.body.ProductId;
