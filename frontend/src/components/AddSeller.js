@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import bcrypt from "bcryptjs";
 
@@ -14,6 +14,13 @@ export default function AddSeller() {
   const [delChrg, setDelChrg] = useState();
   const [password, setPassword] = useState({});
   const [rePassword, setRePassword] = useState({});
+  const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
 
   function proceed(e) {
     e.preventDefault();
@@ -37,7 +44,12 @@ export default function AddSeller() {
             };
 
             axios
-              .post("http://localhost:8070/sellerH/add", newSeller)
+              .post("http://localhost:8070/sellerH/add", newSeller, {
+                headers: {
+                  "CSRF-Token": csrfToken,
+                },
+                withCredentials: true,
+              })
               .then(() => {
                 alert("Registration Successfull !");
                 window.location.replace(

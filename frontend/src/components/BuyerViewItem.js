@@ -22,13 +22,20 @@ export default function BuyerViewItem() {
   const [MaxQuantity, setMaxQuantity] = useState(); // Maximum quantity of the product available in stock
   const [Image, setImage] = useState(""); // Base64 encoded string of the product image
   const [rate, setRate] = useState(0); // Initial user rating for the product is set to 0
-
+  const [csrfToken, setCsrfToken] = useState("");
   // Getting the product ID from the URL using useParams hook
   const { id } = useParams();
   // Get the buyer's email from session storage
   const buyerEmail = sessionStorage.getItem("buyerEmail"); //implement this to get the buyer email from sessions
 
   const [newRemainingQty, setNewRemainingQty] = useState();
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8070/csrf-token", { withCredentials: true })
+      .then((res) => setCsrfToken(res.data.csrfToken))
+      .catch((err) => console.error("Error fetching CSRF token"));
+  }, []);
 
   useEffect(() => {
     // Fetching the product data from the database
@@ -80,7 +87,12 @@ export default function BuyerViewItem() {
       alert("Insufficient Quantity!");
     } else {
       axios
-        .post(`http://localhost:8070/ShoppingCart/add`, newCart)
+        .post(`http://localhost:8070/ShoppingCart/add`, newCart, {
+          headers: {
+            "CSRF-Token": csrfToken,
+          },
+          withCredentials: true,
+        })
         .then(() => {
           updateItem(newRemainingQty);
           alert("Item added to cart");
@@ -111,12 +123,22 @@ export default function BuyerViewItem() {
     // Check if the product has been rated before or not
     if (rate === 0) {
       // If not, add the rating to the server
-      axios.post("http://localhost:8071/rate/add", newRate).catch((err) => {
+      axios.post("http://localhost:8071/rate/add", newRate, {
+        headers: {
+          "CSRF-Token": csrfToken,
+        },
+        withCredentials: true,
+      }).catch((err) => {
         alert("Rating Service is not available.");
       });
     } else {
       // If already rated, update the rating on the server
-      axios.put("http://localhost:8071/rate/update", newRate).catch((err) => {
+      axios.put("http://localhost:8071/rate/update", newRate, {
+        headers: {
+          "CSRF-Token": csrfToken,
+        },
+        withCredentials: true,
+      }).catch((err) => {
         alert("Rating Service is not available.");
       });
     }
@@ -137,7 +159,12 @@ export default function BuyerViewItem() {
       Image,
     };
 
-    axios.put(`http://localhost:8070/item/update/${SupplierId}/${id}`, newItem);
+    axios.put(`http://localhost:8070/item/update/${SupplierId}/${id}`, newItem, {
+      headers: {
+        "CSRF-Token": csrfToken,
+      },
+      withCredentials: true,
+    });
   }
 
   // Check if the product has an image

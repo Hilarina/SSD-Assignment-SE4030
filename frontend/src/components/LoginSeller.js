@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
+import googleIcon from '../images/google-favicon.png'; 
 import {
   loadCaptchaEnginge,
   LoadCanvasTemplate,
@@ -21,6 +22,19 @@ export default function LoginSeller() {
   useEffect(() => {
     loadCaptchaEnginge(6);
   }, []);
+
+  const handleOAuth = () => {
+    sessionStorage.setItem("oauth", "true");
+    const callbackUrl = `http://localhost:3000/selleroauth`; // Must redirect here after Google OAuth
+    const googleClientId =
+      "252001878781-uq49h7e6iaoql9le46juvakqdps3hib1.apps.googleusercontent.com";
+    const targetUrl = `https://accounts.google.com/o/oauth2/auth?redirect_uri=${encodeURIComponent(
+      callbackUrl
+    )}&response_type=token&client_id=${googleClientId}&scope=openid%20email%20profile`;
+
+    // Redirect to Google OAuth
+    window.location.href = targetUrl;
+  };
 
   function validate(e) {
     e.preventDefault();
@@ -131,6 +145,27 @@ export default function LoginSeller() {
                         type="submit"
                       >
                         Login
+                      </button>
+                      <button
+                        className="btn btn-light btn-lg px-5"
+                        type="button"
+                        onClick={handleOAuth}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: "#fff",
+                          color: "#4285F4",
+                          border: "1px solid lightgray",
+                          marginTop: "10px",
+                        }}
+                      >
+                        <img
+                          src={googleIcon}
+                          alt="Google Icon"
+                          style={{ width: "20px", marginRight: "10px" }}
+                        />
+                        Sign In with Google
                       </button>
                     </div>
 

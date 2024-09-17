@@ -20,6 +20,14 @@ function UpdateItem() {
     const [Image, setImage] = useState("");
 
     const { update, id } = useParams();
+    const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
+
     useEffect(() => {
         axios.get(`http://localhost:8070/item/get/${SupplierId}/${id}`).then((res) => {
             console.log(res.data.item);
@@ -52,7 +60,12 @@ function UpdateItem() {
         e.preventDefault();
 
         const newItem = { SupplierId, ProductId, Name, Description, Price, Quantity, Image }
-        axios.put(`http://localhost:8070/item/update/${SupplierId}/${id}`, newItem).then(() => {
+        axios.put(`http://localhost:8070/item/update/${SupplierId}/${id}`, newItem, {
+            headers: {
+              "CSRF-Token": csrfToken,
+            },
+            withCredentials: true,
+          }).then(() => {
             alert("Item  Updated");
             //window.location --> helps the user to navigate(frontend --> so port is 3000)
             //axios --> navigation between frontend and backend --> so port is 8070.

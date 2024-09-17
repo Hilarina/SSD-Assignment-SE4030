@@ -11,6 +11,13 @@ export default function DeliveryRequests(){
     const agentEmail = sessionStorage.getItem("sellerEmail");
 
     const[delRequests, setDelRequests] = useState([]);
+    const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(()=>{
+    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
+    .then((res)=> setCsrfToken(res.data.csrfToken))
+    .catch((err)=>console.error("Error fetching CSRF token"));
+}, []);
 
     useEffect(()=>{
         axios.get(`http://localhost:8070/order/getdeliveries/${agentEmail}`).then((res)=>{
@@ -56,7 +63,12 @@ export default function DeliveryRequests(){
                                             delRequest.status = "Paid. Delivered."
                                             var response = window.confirm("Are you sure you want to mark this order as Delivered?");
                                             if (response){
-                                                axios.put(`http://localhost:8070/order/approvalprocess/${delRequest.orderRef}`, delRequest).then(()=>{
+                                                axios.put(`http://localhost:8070/order/approvalprocess/${delRequest.orderRef}`, delRequest, {
+                                                    headers: {
+                                                      "CSRF-Token": csrfToken,
+                                                    },
+                                                    withCredentials: true,
+                                                  }).then(()=>{
                                                     alert("Order marked as Delivered!");
                                                     window.location.replace("http://localhost:3000/sellerhome/delivery");
                                                 }).catch((err)=>{
