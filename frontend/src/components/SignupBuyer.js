@@ -25,7 +25,7 @@ export default function SignupBuyer() {
     const newErrors = {};
 
     // Validate name
-    if (!name.RegExp.exec(/^[A-Za-z .]{1,100}$/)) {
+    if (!/^[A-Za-z .]{1,100}$/.test(name)) {
       newErrors.name =
         "Name can only contain letters and must be between 1 and 100 characters.";
     }
@@ -41,7 +41,7 @@ export default function SignupBuyer() {
     }
 
     // Validate email
-    if (!email.RegExp.exec(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = "Please enter a valid email address.";
     }
 
@@ -52,8 +52,7 @@ export default function SignupBuyer() {
     }
 
     // Validate password
-    const passwordPattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    const passwordPattern =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
     if (!passwordPattern.test(password)) {
       newErrors.password =
         "Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character.";
@@ -144,6 +143,7 @@ export default function SignupBuyer() {
           console.log(err);
         });
     }
+    
   }
 
   return (
