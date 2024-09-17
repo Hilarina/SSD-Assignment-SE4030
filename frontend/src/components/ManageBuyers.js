@@ -10,11 +10,12 @@ export default function ManageBuyers() {
   const [buyers, setBuyers] = useState([]);
   const [csrfToken, setCsrfToken] = useState("");
 
-  useEffect(()=>{
-    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
-    .then((res)=> setCsrfToken(res.data.csrfToken))
-    .catch((err)=>console.error("Error fetching CSRF token"));
-}, []);
+  useEffect(() => {
+    axios
+      .get("http://localhost:8070/csrf-token", { withCredentials: true })
+      .then((res) => setCsrfToken(res.data.csrfToken))
+      .catch((err) => console.error("Error fetching CSRF token"));
+  }, []);
 
   useEffect(() => {
     // get buyers data from backend API when component mounts
@@ -36,7 +37,10 @@ export default function ManageBuyers() {
       <a href="/adminhome">
         <Button variant="dark">Back</Button>
       </a>
-      <h1 align="Center">Manage Buyers</h1> <br></br>
+      <center>
+        <h1>Manage Buyers</h1>
+      </center>{" "}
+      <br></br>
       {/* <a href="/adminhome/managebuyers/add"><button>Add</button></a> */}
       {buyers.length === 0 && <h1>No Records</h1>}
       {buyers.length !== 0 && (
@@ -57,7 +61,7 @@ export default function ManageBuyers() {
 
           <tbody>
             {buyers.map((buyer) => (
-              <tr>
+              <tr key={buyer.email}>
                 <td>
                   <center>{buyer.name}</center>
                 </td>
@@ -73,7 +77,7 @@ export default function ManageBuyers() {
                       );
                     }}
                   >
-                    View <i class="fa fa-pencil"></i>
+                    View <i className="fa fa-pencil"></i>
                   </button>
                 </td>
                 <td>
@@ -85,36 +89,38 @@ export default function ManageBuyers() {
                       );
                     }}
                   >
-                    Update <i class="fa fa-pencil"></i>
+                    Update <i className="fa fa-pencil"></i>
                   </button>
                 </td>
                 <td>
                   <button
                     className="btn btn-danger btn-sm"
                     onClick={() => {
-                      var response = window.confirm(
+                      let response = window.confirm(
                         "Are you sure you want to delete this user?"
                       );
                       if (response) {
                         axios
                           .delete(
-                            `http://localhost:8070/buyerH/delete/email/${buyer.email}`
-                            , {
+                            `http://localhost:8070/buyerH/delete/email/${buyer.email}`,
+                            {
                               headers: {
                                 "CSRF-Token": csrfToken,
                               },
                               withCredentials: true,
-                            })
+                            }
+                          )
                           .then(() => {
                             axios
                               .post(
-                                `http://localhost:8072/email/delete/${buyer.name}/${buyer.email}`
-                                , {
+                                `http://localhost:8072/email/delete/${buyer.name}/${buyer.email}`,
+                                {
                                   headers: {
                                     "CSRF-Token": csrfToken,
                                   },
                                   withCredentials: true,
-                                })
+                                }
+                              )
                               .catch((err) => {
                                 alert("Email Service is not available.");
                               });
@@ -130,7 +136,7 @@ export default function ManageBuyers() {
                       }
                     }}
                   >
-                    Delete <i class="fa fa-trash-o fa-lg"></i>
+                    Delete <i className="fa fa-trash-o fa-lg"></i>
                   </button>
                 </td>
               </tr>

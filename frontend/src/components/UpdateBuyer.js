@@ -20,11 +20,12 @@ export default function UpdateBuyer() {
   const { paramemail } = useParams();
   const [csrfToken, setCsrfToken] = useState("");
 
-  useEffect(()=>{
-    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
-    .then((res)=> setCsrfToken(res.data.csrfToken))
-    .catch((err)=>console.error("Error fetching CSRF token"));
-}, []);
+  useEffect(() => {
+    axios
+      .get("http://localhost:8070/csrf-token", { withCredentials: true })
+      .then((res) => setCsrfToken(res.data.csrfToken))
+      .catch((err) => console.error("Error fetching CSRF token"));
+  }, []);
 
   useEffect(() => {
     axios
@@ -135,13 +136,13 @@ export default function UpdateBuyer() {
       </center>
 
       <form onSubmit={proceed}>
-        <div class="form-row">
-          <div class="form-group col-md-6">
+        <div className="form-row">
+          <div className="form-group col-md-6">
             <label htmlFor="name">Name</label>
             <input
               type="text"
               id="name"
-              class="form-control"
+              className="form-control"
               placeholder="Enter your name"
               pattern="[A-Za-z .]{1,100}"
               value={name}
@@ -152,12 +153,12 @@ export default function UpdateBuyer() {
             />
           </div>
 
-          <div class="form-group col-md-6">
+          <div className="form-group col-md-6">
             <label htmlFor="address">Address</label>
             <input
               type="text"
               id="address"
-              class="form-control"
+              className="form-control"
               placeholder="Enter your address"
               value={address}
               required
@@ -168,12 +169,12 @@ export default function UpdateBuyer() {
           </div>
         </div>
 
-        <div class="form-group">
+        <div className="form-group">
           <label htmlFor="nic">NIC</label>
           <input
             type="text"
             id="nic"
-            class="form-control"
+            className="form-control"
             placeholder="Enter you NIC number"
             pattern="[0-9]{9}[V||v]|[0-9]{12}"
             value={nic}
@@ -184,12 +185,12 @@ export default function UpdateBuyer() {
           />
         </div>
 
-        <div class="form-group">
+        <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
             type="email"
             id="email"
-            class="form-control"
+            className="form-control"
             placeholder="abc@gmail.com"
             value={email}
             required
@@ -200,12 +201,12 @@ export default function UpdateBuyer() {
           />
         </div>
 
-        <div class="form-row">
+        <div className="form-row">
           <label htmlFor="phone">Phone</label>
           <input
             type="phone"
             id="phone"
-            class="form-control"
+            className="form-control"
             placeholder="Phone No"
             pattern="0[0-9]{9}"
             value={phone}
@@ -220,13 +221,13 @@ export default function UpdateBuyer() {
           Leave the fields below blank if you do not want to change the
           password!
         </h4>
-        <div class="form-row">
-          <div class="form-group col-md-4">
+        <div className="form-row">
+          <div className="form-group col-md-4">
             <label htmlFor="newpassword">New Password</label>
             <input
               type="password"
               id="newpassword"
-              class="form-control"
+              className="form-control"
               placeholder="Enter New Password"
               minLength="8"
               onChange={(e) => {
@@ -235,12 +236,12 @@ export default function UpdateBuyer() {
             />
           </div>
 
-          <div class="form-group col-md-4">
+          <div className="form-group col-md-4">
             <label htmlFor="repassword">Re-enter Password</label>
             <input
               type="password"
               id="repassword"
-              class="form-control"
+              className="form-control"
               placeholder="Re-Enter New Password"
               onChange={(e) => {
                 setRePassword(e.target.value);
@@ -248,7 +249,7 @@ export default function UpdateBuyer() {
             />
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" className="btn btn-primary">
           Update
         </button>
       </form>

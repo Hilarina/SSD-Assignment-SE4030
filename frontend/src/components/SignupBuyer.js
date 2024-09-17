@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useState } from "react";
 import bcrypt from "bcryptjs";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import DOMPurify from "dompurify";
 
 export default function SignupBuyer() {
   const [name, setName] = useState({});
@@ -12,32 +12,90 @@ export default function SignupBuyer() {
   const [password, setPassword] = useState({});
   const [rePassword, setRePassword] = useState({});
   const [csrfToken, setCsrfToken] = useState("");
+  const [errors, setErrors] = useState({});
 
-  useEffect(()=>{
-    axios.get('http://localhost:8070/csrf-token', {withCredentials:true})
-    .then((res)=> setCsrfToken(res.data.csrfToken))
-    .catch((err)=>console.error("Error fetching CSRF token"));
-}, []);
+  useEffect(() => {
+    axios
+      .get("http://localhost:8070/csrf-token", { withCredentials: true })
+      .then((res) => setCsrfToken(res.data.csrfToken))
+      .catch((err) => console.error("Error fetching CSRF token"));
+  }, []);
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validate name
+    if (!name.RegExp.exec(/^[A-Za-z .]{1,100}$/)) {
+      newErrors.name =
+        "Name can only contain letters and must be between 1 and 100 characters.";
+    }
+
+    // Validate address
+    if (address.trim() === "") {
+      newErrors.address = "Address cannot be empty.";
+    }
+
+    // Validate NIC
+    if (!/^(?:\d{9}[Vv]|\d{12})$/.test(nic)) {
+      newErrors.nic = "NIC must be 9 digits followed by V/v or 12 digits.";
+    }
+
+    // Validate email
+    if (!email.RegExp.exec(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    // Validate phone
+    if (!/^0\d{9}$/.test(phone)) {
+      newErrors.phone =
+        "Phone number must start with 0 and be exactly 10 digits.";
+    }
+
+    // Validate password
+    const passwordPattern =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    if (!passwordPattern.test(password)) {
+      newErrors.password =
+        "Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character.";
+    }
+
+    // Validate password match
+    if (password !== rePassword) {
+      newErrors.rePassword = "Passwords do not match.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if there are no errors
+  };
 
   function proceed(e) {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
+
+    // Sanitize inputs to prevent XSS
+    const sanitizedEmail = DOMPurify.sanitize(email);
+    const sanitizedName = DOMPurify.sanitize(name);
+    const sanitizedAddress = DOMPurify.sanitize(address);
+    const sanitizedNic = DOMPurify.sanitize(nic);
+    const sanitizedPhone = DOMPurify.sanitize(phone);
 
     if (password !== rePassword) {
       alert(
         "Re-entered password does not match with the password that you have entered!"
       );
     } else {
-      // checkAccount();
       axios
-        .get(`http://localhost:8070/buyerH/get/email/${email}`)
+        .get(`http://localhost:8070/buyerH/get/email/${sanitizedEmail}`)
         .then(async (res) => {
           if (res.data[0] === undefined) {
             const newBuyer = {
-              name,
-              address,
-              nic,
-              email,
-              phone,
+              name: sanitizedName,
+              address: sanitizedAddress,
+              nic: sanitizedNic,
+              email: sanitizedEmail,
+              phone: sanitizedPhone,
               hpw: bcrypt.hashSync(password),
             };
 
@@ -50,24 +108,36 @@ export default function SignupBuyer() {
               })
               .then(() => {
                 axios
-                  .post(`http://localhost:8072/email/register/${name}/${email}`, {
-                    headers: {
-                      "CSRF-Token": csrfToken,
-                    },
-                    withCredentials: true,
-                  })
+                  .post(
+                    `http://localhost:8072/email/register/${sanitizedName}/${sanitizedEmail}`,
+                    {
+                      headers: {
+                        "CSRF-Token": csrfToken,
+                      },
+                      withCredentials: true,
+                    }
+                  )
                   .catch((err) => {
-                    alert("Email Service is not available.");
+                    setErrors((prev) => ({
+                      ...prev,
+                      emailService: "Email Service is not available.",
+                    }));
                   });
 
                 alert("Registration Successfull !");
                 window.location.replace("http://localhost:3000");
               })
               .catch((err) => {
-                alert("Something went wrong !");
+                setErrors((prev) => ({
+                  ...prev,
+                  general: "Something went wrong during registration.",
+                }));
               });
           } else {
-            alert("You already have an account !");
+            setErrors((prev) => ({
+              ...prev,
+              email: "You already have an account with this email.",
+            }));
           }
         })
         .catch((err) => {
@@ -82,7 +152,9 @@ export default function SignupBuyer() {
         <button className="btn btn-primary">Back</button>
       </a>
 
-      <form onSubmit={proceed}>
+      <form onSubmit={proceed} noValidate>
+        {" "}
+        {/* Added noValidate to disable HTML5 validation */}
         <section className="vh-100 gradient-custom">
           <div className="container py-5 h-100">
             <div className="row d-flex justify-content-center align-items-center h-100">
@@ -100,23 +172,25 @@ export default function SignupBuyer() {
                         Please enter your details!
                       </p>
 
+                      {/* Name field */}
                       <div className="form-outline form-white mb-4">
                         <input
                           type="text"
                           id="name"
                           className="form-control form-control-lg"
                           placeholder="Enter your name"
-                          pattern="[A-Za-z .]{1,100}"
                           required
-                          onChange={(e) => {
-                            setName(e.target.value);
-                          }}
+                          onChange={(e) => setName(e.target.value)}
                         />
                         <label className="form-label" htmlFor="name">
                           Name
                         </label>
+                        {errors.name && (
+                          <p className="text-danger">{errors.name}</p>
+                        )}
                       </div>
 
+                      {/* Address field */}
                       <div className="form-outline form-white mb-4">
                         <input
                           type="text"
@@ -124,32 +198,35 @@ export default function SignupBuyer() {
                           className="form-control form-control-lg"
                           placeholder="Enter your address"
                           required
-                          onChange={(e) => {
-                            setAddress(e.target.value);
-                          }}
+                          onChange={(e) => setAddress(e.target.value)}
                         />
                         <label className="form-label" htmlFor="address">
                           Address
                         </label>
+                        {errors.address && (
+                          <p className="text-danger">{errors.address}</p>
+                        )}
                       </div>
 
+                      {/* NIC field */}
                       <div className="form-outline form-white mb-4">
                         <input
                           type="text"
                           id="nic"
                           className="form-control form-control-lg"
-                          placeholder="Enter you NIC number"
-                          pattern="[0-9]{9}[V||v]|[0-9]{12}"
+                          placeholder="Enter your NIC number"
                           required
-                          onChange={(e) => {
-                            setNic(e.target.value);
-                          }}
+                          onChange={(e) => setNic(e.target.value)}
                         />
                         <label className="form-label" htmlFor="nic">
                           NIC
                         </label>
+                        {errors.nic && (
+                          <p className="text-danger">{errors.nic}</p>
+                        )}
                       </div>
 
+                      {/* Email field */}
                       <div className="form-outline form-white mb-4">
                         <input
                           type="email"
@@ -157,71 +234,85 @@ export default function SignupBuyer() {
                           className="form-control form-control-lg"
                           placeholder="abc@gmail.com"
                           required
-                          onChange={(e) => {
-                            setEmail(e.target.value);
-                          }}
+                          onChange={(e) => setEmail(e.target.value)}
                         />
                         <label className="form-label" htmlFor="email">
                           Email
                         </label>
+                        {errors.email && (
+                          <p className="text-danger">{errors.email}</p>
+                        )}
                       </div>
 
+                      {/* Phone field */}
                       <div className="form-outline form-white mb-4">
                         <input
                           type="phone"
                           id="phone"
                           className="form-control form-control-lg"
                           placeholder="Phone No"
-                          pattern="0[0-9]{9}"
                           required
-                          onChange={(e) => {
-                            setPhone(e.target.value);
-                          }}
+                          onChange={(e) => setPhone(e.target.value)}
                         />
                         <label className="form-label" htmlFor="phone">
                           Phone
                         </label>
+                        {errors.phone && (
+                          <p className="text-danger">{errors.phone}</p>
+                        )}
                       </div>
 
+                      {/* Password field */}
                       <div className="form-outline form-white mb-4">
                         <input
                           type="password"
                           id="newpassword"
                           className="form-control form-control-lg"
                           placeholder="Password"
-                          minLength="8"
                           required
-                          onChange={(e) => {
-                            setPassword(e.target.value);
-                          }}
+                          onChange={(e) => setPassword(e.target.value)}
                         />
                         <label className="form-label" htmlFor="password">
                           New Password
                         </label>
+                        {errors.password && (
+                          <p className="text-danger">{errors.password}</p>
+                        )}
                       </div>
 
+                      {/* Re-enter Password field */}
                       <div className="form-outline form-white mb-4">
                         <input
                           type="password"
                           id="repassword"
                           className="form-control form-control-lg"
-                          placeholder="Password"
+                          placeholder="Re-enter Password"
                           required
-                          onChange={(e) => {
-                            setRePassword(e.target.value);
-                          }}
+                          onChange={(e) => setRePassword(e.target.value)}
                         />
                         <label className="form-label" htmlFor="repassword">
                           Re-enter Password
                         </label>
+                        {errors.rePassword && (
+                          <p className="text-danger">{errors.rePassword}</p>
+                        )}
                       </div>
 
+                      {/* Submit button */}
                       <button
                         className="btn btn-outline-light btn-lg px-5"
                         type="submit"
                       >
                         Create
                       </button>
+                      {errors.general && (
+                        <p className="text-danger mt-3">{errors.general}</p>
+                      )}
+                      {errors.emailService && (
+                        <p className="text-danger mt-3">
+                          {errors.emailService}
+                        </p>
+                      )}
                     </div>
 
                     <div>
