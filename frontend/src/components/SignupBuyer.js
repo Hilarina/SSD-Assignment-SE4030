@@ -17,7 +17,7 @@ export default function SignupBuyer() {
         const newErrors = {};
 
         // Validate name
-        if (!name.match(/^[A-Za-z .]{1,100}$/)) {
+        if (!name.RegExp.exec(/^[A-Za-z .]{1,100}$/)) {
             newErrors.name = "Name can only contain letters and must be between 1 and 100 characters.";
         }
 
@@ -27,19 +27,23 @@ export default function SignupBuyer() {
         }
 
         // Validate NIC
-        if (!nic.match(/^[0-9]{9}[Vv]|[0-9]{12}$/)) {
+        if (!/^(?:\d{9}[Vv]|\d{12})$/.test(nic)) {
             newErrors.nic = "NIC must be 9 digits followed by V/v or 12 digits.";
         }
+        
+        
+        
 
         // Validate email
-        if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        if (!email.RegExp.exec(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
             newErrors.email = "Please enter a valid email address.";
         }
 
         // Validate phone
-        if (!phone.match(/^0[0-9]{9}$/)) {
+        if (!/^0\d{9}$/.test(phone)) {
             newErrors.phone = "Phone number must start with 0 and be exactly 10 digits.";
         }
+        
 
         // Validate password
         const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;

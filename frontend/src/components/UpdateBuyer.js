@@ -89,61 +89,61 @@ export default function UpdateBuyer(){
             <center><h1>Update Buyer</h1></center>
 
         <form onSubmit={proceed}>
-            <div class="form-row">
-                    <div class="form-group col-md-6">
+            <div className="form-row">
+                    <div className="form-group col-md-6">
                      <label htmlFor="name">Name</label>
-                     <input type="text" id="name" class="form-control"  placeholder="Enter your name" pattern="[A-Za-z .]{1,100}" value={name} required onChange={(e)=>{
+                     <input type="text" id="name" className="form-control"  placeholder="Enter your name" pattern="[A-Za-z .]{1,100}" value={name} required onChange={(e)=>{
                         setName(e.target.value);}}/>
                     </div>
 
-                <div class="form-group col-md-6">
+                <div className="form-group col-md-6">
                     <label htmlFor="address">Address</label>
-                    <input type="text" id="address" class="form-control" placeholder="Enter your address" 	value={address} required onChange={(e)=>{
+                    <input type="text" id="address" className="form-control" placeholder="Enter your address" 	value={address} required onChange={(e)=>{
                         setAddress(e.target.value);}}/>
                 </div>
             </div>
 
-            <div class="form-group">
+            <div className="form-group">
                 <label htmlFor="nic">NIC</label>
-                <input type="text" id="nic" class="form-control" placeholder="Enter you NIC number" pattern="[0-9]{9}[V||v]|[0-9]{12}" value={nic} required onChange={(e)=>{
+                <input type="text" id="nic" className="form-control" placeholder="Enter you NIC number" pattern="[0-9]{9}[V||v]|[0-9]{12}" value={nic} required onChange={(e)=>{
                     setNic(e.target.value);
                 }}/>
             </div>
 
-            <div class="form-group">
+            <div className="form-group">
                 <label htmlFor="email">Email</label>
-                <input type="email" id="email" class="form-control" placeholder="abc@gmail.com" value={email} required disabled onChange={(e)=>{
+                <input type="email" id="email" className="form-control" placeholder="abc@gmail.com" value={email} required disabled onChange={(e)=>{
                     setEmail(e.target.value);
                 }}/>
             </div>
 
 
-            <div class="form-row">
+            <div className="form-row">
                 
                 <label htmlFor="phone">Phone</label>
-                <input type="phone" id="phone" class="form-control" placeholder="Phone No" pattern="0[0-9]{9}" value={phone} required onChange={(e)=>{
+                <input type="phone" id="phone" className="form-control" placeholder="Phone No" pattern="0[0-9]{9}" value={phone} required onChange={(e)=>{
                     setPhone(e.target.value);
                 }}/>
             </div>
             <br></br>
             <h4>Leave the fields below blank if you do not want to change the password!</h4>
-            <div class="form-row">
-                <div class="form-group col-md-4">
+            <div className="form-row">
+                <div className="form-group col-md-4">
                     <label htmlFor="newpassword">New Password</label>
-                    <input type="password" id="newpassword" class="form-control" placeholder="Enter New Password" minLength="8"	onChange={(e)=>{
+                    <input type="password" id="newpassword" className="form-control" placeholder="Enter New Password" minLength="8"	onChange={(e)=>{
                     setPassword(e.target.value);
                     }}/>
                 </div>
         
-                <div class="form-group col-md-4">
+                <div className="form-group col-md-4">
             
                     <label htmlFor="repassword">Re-enter Password</label>
-                    <input type="password" id="repassword"  class="form-control" placeholder="Re-Enter New Password" onChange={(e)=>{
+                    <input type="password" id="repassword"  className="form-control" placeholder="Re-Enter New Password" onChange={(e)=>{
                         setRePassword(e.target.value);
                     }}/>
                 </div>
             </div>
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="submit" className="btn btn-primary">Update</button>
             </form>
         </div>
         
